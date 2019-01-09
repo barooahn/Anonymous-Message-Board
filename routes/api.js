@@ -91,17 +91,18 @@ module.exports = function (app) {
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
+        const date= Date.now();
         collection.findAndModify(
           {_id:new ObjectId(thread_id)},
           [['_id',1]],
           {$push: {replies:{
-                      _id:thread_id,
+                      _id:ObjectId(),
                       text:text,
                       delete_password:delete_password,
-                      created_on:Date.now(),
+                      created_on:date,
                       reported:false
                   }}},
-          {$set: {bumped_on:bumped_on}},
+          {$set: {bumped_on:date}},
           {new: true},
           function(err,doc){
             (!err) ? res.redirect('/b/'+board+'/'+thread_id)  : res.send('could not add reply ' + err);
