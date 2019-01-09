@@ -170,22 +170,24 @@ module.exports = function (app) {
   .delete(function (req,res){
     //   I can delete a post(just changing the text to '[deleted]') if I send a DELETE request to /api/replies/{board} 
     //and pass along the thread_id, reply_id, & delete_password. (Text response will be 'incorrect password' or 'success')
-    console.log('start delete reply'); 
       const board = req.params.board;
       
       const thread_id = req.body.thread_id;
       const reply_id = req.body.reply_id; 
       const delete_password = req.body.delete_password; 
-      console.log('body = ', req.body);
+
       let newReplies=[];
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
         collection.findOne({_id: new ObjectId(thread_id)},function(err, doc) {
-              if (err) {res.send('Cannot find id') }
+             if (err) {res.send('Cannot find id') }
              newReplies = doc.replies.map(reply => {
-                 if(reply.reply_id === reply_id) {
+                 console.log('reply',reply);
+                 if(reply.reply_id == reply_id) {
+                   console.log('reply ids equal');
                     if(reply.delete_password === delete_password){
+                      console.log('reply passwords equal');
                       reply.text = 'deleted';
                       console.log('changed text');
                     } else {
@@ -193,17 +195,17 @@ module.exports = function (app) {
                     }
                  }
               });
+              console.log('newReplies ' , newReplies);
+            // collection.findAndModify(
+            //   {_id: new ObjectId(thread_id)},
+            //   [['_id',1]],
+            //   {$set: {replies: newReplies}},
+            //   {new: true},
+            //   function(err,doc){
+            //     (!err) ? res.send('success') : res.send('could not delete reply '+ err);
+            //   }  
+            // );
         })
-        console.log('newReplies ' , newReplies);
-        // collection.findAndModify(
-        //   {_id: new ObjectId(thread_id)},
-        //   [['_id',1]],
-        //   {$set: {replies: newReplies}},
-        //   {new: true},
-        //   function(err,doc){
-        //     (!err) ? res.send('success') : res.send('could not delete reply '+ err);
-        //   }  
-        // );
         db.close();
       });
     })
