@@ -75,6 +75,23 @@ module.exports = function (app) {
                 })
       })
     })
+  
+    .delete(function (req,res){
+      const board = req.params.board;
+      const thread_id = req.query.thread_id;
+      const delete_password = req.query.delete_password;
+    //   I can delete a thread completely if I send a DELETE request to /api/threads/{board} 
+    // and pass along the thread_id & delete_password. (Text response will be 'incorrect password' or 'success')    
+      MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
+        const collection = db.collection(board);
+        
+        
+        collection.remove();
+        res.send("complete delete successful");
+        db.close();
+      });
+    });
+    })
     
   app.route('/api/replies/:board')
   
@@ -120,23 +137,20 @@ module.exports = function (app) {
       const thread_id = req.query.thread_id;
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
             const collection = db.collection(board);
-              collection.find({thread_id:},{reported:0, delete_password:0})
+              collection.find({thread_id: thread_id},{reported:0, delete_password:0})
                 .sort({bumped_on: -1})
-                .limit(10)
                 .toArray(function(err, docs) {
                   if(err) console.log(err);
                   const result = docs.map(doc => {
                     //console.log(doc.replies);
                     let count = doc.replies.length;
                     if(count > 0){
-                      if(count > 3) count = 3;
                       for(let i=0;i<count;i++){
                          doc.replies[i] = {_id: doc.replies[i]._id, text: doc.replies[i].text, created_on: doc.replies[i].created_on};
                       }
                     }
                     return doc;
-                  });
-                           
+                  });                     
                   console.log(result);
                   res.json(result)
                 })
