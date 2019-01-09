@@ -9,6 +9,9 @@
 'use strict';
 
 var expect = require('chai').expect;
+var MongoClient = require('mongodb').MongoClient;
+var ObjectId = require('mongodb').ObjectId;
+const MONGODB_CONNECTION_STRING = process.env.DB;
 
 module.exports = function (app) {
   // I can POST a thread to a specific message board by passing form data text and 
@@ -18,15 +21,30 @@ module.exports = function (app) {
   
   app.route('/api/threads/:board')
     .post(function (req, res){
-       const board = req.body.board;
-       const text = req.body.text;
-       const delete_password = req.body.delete_password;
-       const cre
+      const board = req.body.board;
+      const text = req.body.text;
+      const delete_password = req.body.delete_password;
+      const created_on = Date.now();
+      const bumped_on = created_on;
+      const reported = false;
+      const replies =[];
     
-    console.log('board ', board);
-    console.log('text ', text);
-    console.log('delete_password ', delete_password);
-    
+      MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
+        const collection = db.collection(board);
+        collection.insertOne({
+          text: text, 
+          delete_password:delete_password,
+          created_on:created_on,
+          bumped_on:bumped_on,
+          reported:reported,
+          replies:replies     
+        },function(err,doc){
+          //doc._id = doc.insertedId;
+          res.json(doc.ops[0]);
+        });
+        db.close();
+      })
+       
   })
     
     
