@@ -66,21 +66,17 @@ module.exports = function (app) {
         collection.findAndModify(
           {_id:new ObjectId(thread_id)},
           [['_id',1]],
-          {$push: {comments: comment}},
+          {$push: {replies:{
+                      text:text,
+                      delete_password:delete_password,
+                      created_on:Date.now(),
+                  }}},
+          {$set: {bumped_on:bumped_on}},
           {new: true},
           function(err,doc){
-            (!err) ? res.json(doc.value) : res.send('could not add comment '+ req.params.id +' '+ err);
-          }  
-          text: text, 
-          delete_password:delete_password,
-          created_on:created_on,
-          bumped_on:bumped_on,
-          reported:reported,
-          replies:replies     
-        },function(err,doc){
-          //doc._id = doc.insertedId;
-          res.json(doc.ops[0]);
-        });
+            (!err) ? res.redirect('/b/'+board+'/'+thread_id)  : res.send('could not add reply ' + err);
+          }
+        );
         db.close();
       });
       
