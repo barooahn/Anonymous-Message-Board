@@ -54,9 +54,10 @@ module.exports = function (app) {
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
             const collection = db.collection(board);
               collection.find()
-                .sort({bumped_on: 'dec'})
                 .limit(10)
                 .toArray(function(err, docs) {
+                  if(err) console.log(err);
+                  console.log(docs);
                     res.json(docs)
                 })
       })
