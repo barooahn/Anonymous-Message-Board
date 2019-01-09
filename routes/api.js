@@ -181,15 +181,29 @@ module.exports = function (app) {
         const collection = db.collection(board);
         collection.findOne({_id: new ObjectId(thread_id)},function(err, doc) {
               if (err) {res.send('Cannot find id') }
-              else if(doc.delete_password === delete_password) {
-                  collection.remove();
-                  res.send('success');
-              } else {
-                res.send('incorrect password');
-              }
-              
-              db.close();
-        });
+              const result = doc.map.replies(reply => {
+                 if(reply.reply_id === reply_id) {
+                    if(reply.delete_password === delete_password){
+                      reply.text = 'deleted';
+                      res.send('success');
+                    } else {
+                      res.send('incorrect password');
+                    }
+                 }
+              });
+          return result;
+        })
+        
+        collection.findAndModify(
+          {_id:new ObjectId(req.params.id)},
+          [['_id',1]],
+          {$push: {comments: comment}},
+          {new: true},
+          function(err,doc){
+            (!err) ? res.json(doc.value) : res.send('could not add comment '+ req.params.id +' '+ err);
+          }  
+        );
+        db.close();
       });
     })
     
