@@ -61,7 +61,7 @@ module.exports = function (app) {
 // & thread_id to /api/replies/{board} and it will also update the bumped_on date to the 
 // comments date.(Recomend res.redirect to thread page /b/{board}/{thread_id}) In the thread's 
 // 'replies' array will be saved _id, text, created_on, delete_password, & reported.
-      const board = req.body.board;
+      const board = req.params.board;
       const text = req.body.text;
       const delete_password = req.body.delete_password;
       const thread_id  = req.body.thread_id;
