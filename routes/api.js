@@ -60,18 +60,18 @@ module.exports = function (app) {
                   if(err) console.log(err);
                   let replies=[];
                   const result = docs.map(doc => {
-                    if(doc.replies != []){
-                      console.log('replies ',doc.replies);
-                      let count = doc.replies.length();
+                    //console.log(doc.replies);
+                    let count = doc.replies.length;
+                    if(count > 0){
                       if(count > 3) count = 3;
                       for(let i=0;i<count;i++){
-                         replies.push({_id: doc.replies[i].id, text: doc.replies[i].text, created_on: doc.replies[i].created_on})
+                         replies.push({_id: doc.replies.id, text: doc.replies.text, created_on: doc.replies.created_on})
                       }
                     }
                   });
                            
                   console.log(result);
-                    res.json(result)
+                  res.json(result)
                 })
       })
     })
