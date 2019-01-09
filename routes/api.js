@@ -176,13 +176,14 @@ module.exports = function (app) {
       const thread_id = req.body.thread_id;
       const reply_id = req.body.reply_id; 
       const delete_password = req.body.delete_password; 
-      const newReplies=[];
+      console.log('body = ', req.body);
+      let newReplies=[];
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
         collection.findOne({_id: new ObjectId(thread_id)},function(err, doc) {
               if (err) {res.send('Cannot find id') }
-             newReplies = doc.map.replies(reply => {
+             newReplies = doc.replies.map(reply => {
                  if(reply.reply_id === reply_id) {
                     if(reply.delete_password === delete_password){
                       reply.text = 'deleted';
@@ -193,16 +194,16 @@ module.exports = function (app) {
                  }
               });
         })
-        
-        collection.findAndModify(
-          {_id: new ObjectId(thread_id)},
-          [['_id',1]],
-          {$set: {replies: newReplies}},
-          {new: true},
-          function(err,doc){
-            (!err) ? res.send('success') : res.send('could not delete reply '+ err);
-          }  
-        );
+        console.log('newReplies ' , newReplies);
+        // collection.findAndModify(
+        //   {_id: new ObjectId(thread_id)},
+        //   [['_id',1]],
+        //   {$set: {replies: newReplies}},
+        //   {new: true},
+        //   function(err,doc){
+        //     (!err) ? res.send('success') : res.send('could not delete reply '+ err);
+        //   }  
+        // );
         db.close();
       });
     })
