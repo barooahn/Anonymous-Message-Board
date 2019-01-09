@@ -175,44 +175,22 @@ module.exports = function (app) {
       const thread_id = req.body.thread_id;
       const reply_id = req.body.reply_id; 
       const delete_password = req.body.delete_password; 
-
-      let newReplies;
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
-        const collection = db.collection(board);
-        collection.findOne({_id: new ObjectId(thread_id)},function(err, doc) {
-             if (err) {res.send('Cannot find id') }
-             newReplies = doc.replies.map(reply => {
-                 if(reply._id == reply_id) {
-                   console.log('reply ids equal');
-                    if(reply.delete_password === delete_password){
-                      console.log('reply passwords equal');
-                      reply.text = 'deleted';
-                      console.log('changed text', reply);
-                      return reply;
-                    } else {
-                      res.send('incorrect password');
-                    }
-                 }
-              });
-        })
-          
-        db.close();
-      });
-      console.log('newReplies ' , newReplies);
-      MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
-        const collection = db.collection(board);
+        const collection = db.collection(board); 
         collection.findAndModify(
-          {_id: new ObjectId(thread_id)},
-          [['_id',1]],
-          {$set: {replies: newReplies}},
-          function(err,doc){
+        {
+          _id: new ObjectId(thread_id),
+          replies: { $elemMatch: { _id: new ObjectId(reply_id), delete_password: delete_password } },
+        },
+        [],
+        { $set: { "replies.$.text": "[deleted]" } },
+        function(err, doc) {
             (!err) ? res.send('success') : res.send('could not delete reply '+ err);
           }  
         );
         db.close();
       })
     })
-    
-
+  
 };
