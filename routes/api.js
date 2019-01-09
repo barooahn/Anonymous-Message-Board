@@ -83,15 +83,16 @@ module.exports = function (app) {
     // and pass along the thread_id & delete_password. (Text response will be 'incorrect password' or 'success')   
     console.log('start delete'); 
       const board = req.params.board;
-      const thread_id = req.query.thread_id;
-      const delete_password = req.query.delete_password;
+      const thread_id = req.body.thread_id;
+      const delete_password = req.body.delete_password;
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
-        collection.find({_id :new ObjectId(req.body._id)}, function(err,doc){
-              console.log('delete ',doc); 
+        collection.find({_id :thread_id}, function(err,doc){
+              console.log('doc ',doc);
+              console.log('input pass ',delete_password);
               if (err) {res.send('Cannot find id') }
               else if(doc.delete_password === delete_password) {
-                  collection.remove();
+                  //collection.remove();
                   res.send('success');
               } else {
                 res.send('incorrect password');
