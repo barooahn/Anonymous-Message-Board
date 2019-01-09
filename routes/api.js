@@ -53,17 +53,24 @@ module.exports = function (app) {
       const board = req.params.board;
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
             const collection = db.collection(board);
-              collection.find({},{reported: -1, })
+              collection.find({},{reported:0, delete_password:0})
                 .sort({bumped_on: -1})
                 .limit(10)
                 .toArray(function(err, docs) {
                   if(err) console.log(err);
+                  let replies=[];
+                  docs.map(doc => {
+                    for(let i=0;i<3;i++){
+                       doc.replies
+                    }
+                    
+                  }
+                           
                   console.log(docs);
                     res.json(docs)
                 })
       })
     })
-    db.bios.find( { }, { name: 1, contribs: 1 } )
     
   app.route('/api/replies/:board')
   
