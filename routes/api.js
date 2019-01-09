@@ -58,6 +58,8 @@ module.exports = function (app) {
                 .limit(10)
                 .toArray(function(err, docs) {
                   if(err) console.log(err);
+                  console.log('get ',docs); 
+
                   const result = docs.map(doc => {
                     //console.log(doc.replies);
                     let count = doc.replies.length;
@@ -85,8 +87,9 @@ module.exports = function (app) {
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
         collection.find({_id :new ObjectId(req.body._id)}, function(err,doc){
+              console.log('delete ',doc); 
               if (err) {res.send('Cannot find id') }
-              else if(doc.delete_password = delete_password) {
+              else if(doc.delete_password === delete_password) {
                   collection.remove();
                   res.send('success');
               } else {
@@ -94,10 +97,8 @@ module.exports = function (app) {
               }
               
               db.close();
-            }  
-
-        );
-    });
+        });
+      });
     })
     
   app.route('/api/replies/:board')
