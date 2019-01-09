@@ -186,11 +186,10 @@ module.exports = function (app) {
         [],
         { $set: { "replies.$.text": "[deleted]" } },
         function(err, doc) {
-            (!err) ? res.send('success') : res.send('could not delete reply '+ err);
+            (!err) ? res.send('success') : res.send('incorrect password');
           }  
         );
         db.close();
       })
     })
-  
 };
