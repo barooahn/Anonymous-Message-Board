@@ -84,12 +84,19 @@ module.exports = function (app) {
     // and pass along the thread_id & delete_password. (Text response will be 'incorrect password' or 'success')    
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
-        
-        
-        collection.remove();
-        res.send("complete delete successful");
-        db.close();
-      });
+        collection.find({_id :new ObjectId(req.body._id)}, function(err,doc){
+              if (err) {res.send('Cannot find id') }
+              else if(doc.delete_password = delete_password) {
+                  collection.remove();
+                  res.send('success');
+              } else {
+                res.send('incorrect password');
+              }
+              
+              db.close();
+            }  
+
+        );
     });
     })
     
