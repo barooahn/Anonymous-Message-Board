@@ -195,18 +195,23 @@ module.exports = function (app) {
                     }
                  }
               });
-              console.log('newReplies ' , newReplies);
-              collection.findAndModify(
-                {_id: new ObjectId(thread_id)},
-                [['_id',1]],
-                {$update: {replies: newReplies}},
-                function(err,doc){
-                  (!err) ? res.send('success') : res.send('could not delete reply '+ err);
-                }  
-              );
         })
+          
         db.close();
       });
+      console.log('newReplies ' , newReplies);
+      MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
+        const collection = db.collection(board);
+        collection.findAndModify(
+          {_id: new ObjectId(thread_id)},
+          [['_id',1]],
+          {$set: {replies: newReplies}},
+          function(err,doc){
+            (!err) ? res.send('success') : res.send('could not delete reply '+ err);
+          }  
+        );
+        db.close();
+      })
     })
     
 
