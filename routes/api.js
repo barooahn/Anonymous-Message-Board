@@ -79,11 +79,12 @@ module.exports = function (app) {
     })
   
     .delete(function (req,res){
+    //   I can delete a thread completely if I send a DELETE request to /api/threads/{board} 
+    // and pass along the thread_id & delete_password. (Text response will be 'incorrect password' or 'success')   
+    console.log('start delete'); 
       const board = req.params.board;
       const thread_id = req.query.thread_id;
       const delete_password = req.query.delete_password;
-    //   I can delete a thread completely if I send a DELETE request to /api/threads/{board} 
-    // and pass along the thread_id & delete_password. (Text response will be 'incorrect password' or 'success')    
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
         collection.find({_id :new ObjectId(req.body._id)}, function(err,doc){
