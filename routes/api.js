@@ -24,7 +24,7 @@ module.exports = function (app) {
       const board = req.body.board;
       const text = req.body.text;
       const delete_password = req.body.delete_password;
-      const created_on = Date.now().toLocaleString();
+      const created_on = new Date();
       const bumped_on = created_on;
       const reported = false;
       const replies =[];
@@ -40,7 +40,7 @@ module.exports = function (app) {
           replies:replies     
         },function(err,doc){
           //doc._id = doc.insertedId;
-          res.redirect('/b/'+board);
+           res.redirect('/b/'+board+'/');
         });
         db.close();
       });
@@ -114,11 +114,10 @@ module.exports = function (app) {
       const text = req.body.text;
       const delete_password = req.body.delete_password;
       const thread_id  = req.body.thread_id;
-      const bumped_on = Date.now().toLocaleString();
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
-        const date= Date.now().toLocaleString();
+        const date = new Date();
         collection.findAndModify(
           {_id:new ObjectId(thread_id)},
           [['_id',1]],
@@ -132,7 +131,7 @@ module.exports = function (app) {
           {$set: {bumped_on:date}},
           {new: true},
           function(err,doc){
-            (!err) ? res.redirect('/b/'+board+'/'+thread_id)  : res.send('could not add reply ' + err);
+            (!err) ? res.redirect('/b/'+board+'/'+thread_id+'/')  : res.send('could not add reply ' + err);
           }
         );
         db.close();
