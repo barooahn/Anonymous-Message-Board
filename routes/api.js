@@ -60,12 +60,14 @@ module.exports = function (app) {
                   if(err) console.log(err);
                   let replies=[];
                   const result = docs.map(doc => {
-                    let count = doc.replies.length();
-                    if(count > 3) count = 3;
-                    for(let i=0;i<count;i++){
-                       replies.push({_id: doc.replies[i].id, text: doc.replies[i].text, created_on: doc.replies[i].created_on})
+                    if(doc.replies != []){
+                      console.log('replies ',doc.replies);
+                      let count = doc.replies.length();
+                      if(count > 3) count = 3;
+                      for(let i=0;i<count;i++){
+                         replies.push({_id: doc.replies[i].id, text: doc.replies[i].text, created_on: doc.replies[i].created_on})
+                      }
                     }
-                    
                   });
                            
                   console.log(result);
