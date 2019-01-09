@@ -40,7 +40,7 @@ module.exports = function (app) {
           replies:replies     
         },function(err,doc){
           //doc._id = doc.insertedId;
-          res.json(doc.ops[0]);
+          res.redirect('/b/'+board);
         });
         db.close();
       });
@@ -67,9 +67,11 @@ module.exports = function (app) {
           {_id:new ObjectId(thread_id)},
           [['_id',1]],
           {$push: {replies:{
+                      _id:thread_id,
                       text:text,
                       delete_password:delete_password,
                       created_on:Date.now(),
+                      reported:false
                   }}},
           {$set: {bumped_on:bumped_on}},
           {new: true},
