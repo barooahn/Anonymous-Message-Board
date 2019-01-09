@@ -50,7 +50,16 @@ module.exports = function (app) {
     .get(function (req,res){ 
     // I can GET an array of the most recent 10 bumped threads on the board with only the most recent 3 replies 
     // from /api/threads/{board}. The reported and delete_passwords fields will not be sent.
-    const board = req.params.board;
+      const board = req.params.board;
+      MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
+            const collection = db.collection(board);
+              collection.find()
+                .sort({bumped_on: 'dec'})
+                .limit(10)
+                .toArray(function(err, docs) {
+                    res.json(docs)
+                })
+      })
     })
     
     
