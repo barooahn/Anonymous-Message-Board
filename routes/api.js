@@ -24,7 +24,7 @@ module.exports = function (app) {
       const board = req.body.board;
       const text = req.body.text;
       const delete_password = req.body.delete_password;
-      const created_on = Date.now();
+      const created_on = Date.now().toLocaleString();
       const bumped_on = created_on;
       const reported = false;
       const replies =[];
@@ -87,7 +87,7 @@ module.exports = function (app) {
       const text = req.body.text;
       const delete_password = req.body.delete_password;
       const thread_id  = req.body.thread_id;
-      const bumped_on = Date.now();
+      const bumped_on = Date.now().toLocaleString();
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
@@ -111,7 +111,38 @@ module.exports = function (app) {
         db.close();
       });
       
-  });
+  })
+  
+  .get(function (req,res){ 
+   // I can GET an entire thread with all it's replies from /api/replies/{board}?thread_id={thread_id}. 
+   //  Also hiding the same fields.
+      const board = req.params.board;
+      const thread_id = req.query.thread_id;
+      MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
+            const collection = db.collection(board);
+              collection.find({thread_id:},{reported:0, delete_password:0})
+                .sort({bumped_on: -1})
+                .limit(10)
+                .toArray(function(err, docs) {
+                  if(err) console.log(err);
+                  const result = docs.map(doc => {
+                    //console.log(doc.replies);
+                    let count = doc.replies.length;
+                    if(count > 0){
+                      if(count > 3) count = 3;
+                      for(let i=0;i<count;i++){
+                         doc.replies[i] = {_id: doc.replies[i]._id, text: doc.replies[i].text, created_on: doc.replies[i].created_on};
+                      }
+                    }
+                    return doc;
+                  });
+                           
+                  console.log(result);
+                  res.json(result)
+                })
+      })
+    })
+    
   
 
 };
