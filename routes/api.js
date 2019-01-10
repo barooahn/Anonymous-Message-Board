@@ -21,6 +21,9 @@ module.exports = function (app) {
   // delete_password to /api/threads/{board}.(Recomend res.redirect to board page /b/{board}) 
   // Saved will be _id, text, created_on(date&time), bumped_on(date&time, starts same as created_on), 
   // reported(boolean), delete_password, & replies(array).
+      const post = {
+        board:
+      };
       const board = req.body.board;
       const text = req.body.text;
       const delete_password = req.body.delete_password;
