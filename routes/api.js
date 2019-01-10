@@ -80,21 +80,21 @@ module.exports = function (app) {
       const thread_id = req.body.thread_id;
       if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
       const delete_password = req.body.delete_password; 
-    
+
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
-        collection.findOne({_id: new ObjectId(thread_id)},function(err, doc) {
-              if (err) {res.send('Cannot find id') }
-              else if(doc.delete_password === delete_password) {
-                  collection.remove();
-                  res.send('success');
-              } 
-              else {
-                res.send('incorrect password');
-              }
-              
-              db.close();
+        collection.findOne(
+          {_id: new ObjectId(thread_id), 
+           $elemMatch: { delete_password: delete_password }}
+          ,function(err, doc) {
+            if(err) { res.send('Database error ' + err) } 
+            else if(doc.lastErrorObject.updatedExisting == false) {
+                res.send('incorrect password')
+            } else {          
+            res.send('success');
+            } 
         });
+      db.close();
       });
     })
   
