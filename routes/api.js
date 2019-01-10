@@ -241,7 +241,7 @@ module.exports = function (app) {
             else if(doc.lastErrorObject.updatedExisting == false) {
               res.send('incorrect id');} 
             else {          
-              res.send('success');
+              res.send('reported');
             }
           }
       )
