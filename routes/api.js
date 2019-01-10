@@ -166,18 +166,18 @@ module.exports = function (app) {
    //  Also hiding the same fields.
       const board = req.params.board;
       const thread_id = req.query.thread_id;
-      if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
+     // if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
             const collection = db.collection(board);
               collection.findOne(
                 {_id: new ObjectId(thread_id)},
                 {reported:0, delete_password:0, "replies.reported":0, "replies.delete_password":0},
-
                 {"sort": "bumped_on"},
                 function(err, docs) {
-                  if(err) console.log(err);
-                  console.log(docs);
-                  res.json(docs)
+                  if(err) {res.send('database error' + err)}
+                  else {console.log(docs);
+                    res.json(docs);
+                  }
                   });                     
                 })
       })
