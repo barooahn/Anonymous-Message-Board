@@ -243,11 +243,14 @@ module.exports = function (app) {
           [],
           {$set: {"replies.$.reported": true }},
           function(err,doc){
-
+            if(err) { res.send('database error: ' +err)}
+            else if(doc.lastErrorObject.updatedExisting == false) {
+              res.send('incorrect id');} 
+            else {          
+              res.send('success');
+            }
           }
       )
-        
     });
-    
   })
 };
