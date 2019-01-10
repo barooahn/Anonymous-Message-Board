@@ -78,6 +78,7 @@ module.exports = function (app) {
       const board = req.params.board;
       
       const thread_id = req.body.thread_id;
+      if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
       const delete_password = req.body.delete_password; 
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
@@ -103,6 +104,7 @@ module.exports = function (app) {
       // (Text response will be 'success')    
       const board = req.params.board;
       const thread_id = req.body.thread_id;
+      if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
           const collection = db.collection(board);
@@ -133,6 +135,7 @@ module.exports = function (app) {
       const text = req.body.text;
       const delete_password = req.body.delete_password;
       const thread_id  = req.body.thread_id;
+      if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
@@ -163,6 +166,7 @@ module.exports = function (app) {
    //  Also hiding the same fields.
       const board = req.params.board;
       const thread_id = req.query.thread_id;
+      if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
             const collection = db.collection(board);
               collection.find({thread_id: thread_id},{reported:0, delete_password:0})
@@ -191,7 +195,9 @@ module.exports = function (app) {
       const board = req.params.board;
       
       const thread_id = req.body.thread_id;
+      if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
       const reply_id = req.body.reply_id; 
+      if(!ObjectId.isValid(reply_id)){return res.send('invalid reply id')}
       const delete_password = req.body.delete_password; 
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
