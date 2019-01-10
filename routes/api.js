@@ -100,7 +100,20 @@ module.exports = function (app) {
       // I can report a thread and change it's reported value to true by sending a 
       // PUT request to /api/threads/{board} and pass along the thread_id. 
       // (Text response will be 'success')    
-      
+      const board = req.params.board;
+      const thread_id = req.body.thread_id;
+    
+      MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
+          const collection = db.collection(board);
+          collection.findAndModify(
+            {_id : new ObjectId(thread_id)},
+            [],
+            {$set: {reported : true}}, 
+            function(err, doc) {
+              if(err) { res.send( 
+              doc
+          })
+      })
     
     })
     
