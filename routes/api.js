@@ -88,7 +88,7 @@ module.exports = function (app) {
             delete_password: delete_password}
           ,function(err, doc) {
             if(err) { res.send('Database error ' + err) } 
-            else if(doc.lastErrorObject.updatedExisting == false) {
+            else if(!doc.deletedCount == 1) {
                 res.send('incorrect password')
             } else {          
             res.send('success');
@@ -97,14 +97,14 @@ module.exports = function (app) {
       db.close();
       });
     })
-  
+   
     .put(function (req,res){
       // I can report a thread and change it's reported value to true by sending a 
       // PUT request to /api/threads/{board} and pass along the thread_id. 
       // (Text response will be 'success')    
       const board = req.params.board;
       const thread_id = req.body.thread_id;
-      if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
+      if(!ObjectId.isValid(thread_id)){return console.log('invalid thread id')}
     
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
           const collection = db.collection(board);
@@ -115,7 +115,7 @@ module.exports = function (app) {
             function(err, doc) {
               if(err) { res.send('database error: ' +err)}
               else if(doc.lastErrorObject.updatedExisting == false) {
-                res.send('incorrect id');} 
+                console.log('incorrect id');} 
               else {          
                 res.send('reported');
               }
