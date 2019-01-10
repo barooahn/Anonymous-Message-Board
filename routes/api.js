@@ -222,4 +222,32 @@ module.exports = function (app) {
         db.close();
       })
     })
+  
+  .put(function(req,res) {
+  //   I can report a reply and change it's reported value to true by sending a PUT request 
+  //   to /api/replies/{board} and pass along the thread_id & reply_id. 
+  //   (Text response will be 'success')
+    
+    const board = req.params.board;
+    const thread_id = req.body.thread_id;
+    if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
+    const reply_id = req.body.reply_id; 
+    if(!ObjectId.isValid(reply_id)){return res.send('invalid reply id')}
+    
+    MongoClient.connect(MONGODB_CONNECTION_STRING, function(err,db) {
+      const collection = db.collection(board);
+      collection.findAndModify(
+          {  _id : new ObjectId(thread_id),
+            replies: { $elemMatch: { _id: new ObjectId(reply_id)}}
+          },
+          [],
+          {$set: {"replies.$.reported": true }},
+          function(err,doc){
+
+          }
+      )
+        
+    });
+    
+  })
 };
