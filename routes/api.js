@@ -21,28 +21,18 @@ module.exports = function (app) {
   // delete_password to /api/threads/{board}.(Recomend res.redirect to board page /b/{board}) 
   // Saved will be _id, text, created_on(date&time), bumped_on(date&time, starts same as created_on), 
   // reported(boolean), delete_password, & replies(array).
+      const board = req.params.board;
       const post = {
-        board:
+        text:req.body.text,
+        delete_password: req.body.delete_password,
+        created_on: new Date(),
+        bumped_on: new Date(),
+        reported: false,
+        replies: []
       };
-      const board = req.body.board;
-      const text = req.body.text;
-      const delete_password = req.body.delete_password;
-      const created_on = new Date();
-      const bumped_on = created_on;
-      const reported = false;
-      const replies =[];
-    
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
-        collection.insertOne({
-          text: text, 
-          delete_password:delete_password,
-          created_on:created_on,
-          bumped_on:bumped_on,
-          reported:reported,
-          replies:replies     
-        },function(err,doc){
-          //doc._id = doc.insertedId;
+        collection.insertOne(post,function(err,doc){
            res.redirect('/b/'+board+'/');
         });
         db.close();
@@ -105,6 +95,10 @@ module.exports = function (app) {
         });
       });
     })
+  
+    .put(fuction (req,res){
+         
+         })
     
   app.route('/api/replies/:board')
   
