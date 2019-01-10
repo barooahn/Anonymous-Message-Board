@@ -171,20 +171,11 @@ module.exports = function (app) {
             const collection = db.collection(board);
               collection.findOne(
                 {_id: new ObjectId(thread_id)},
-                {reported:0, delete_password:0},
+                {reported:0, delete_password:0, "replies.reported":0, "replies.delete_password":0},
 
                 {"sort": "bumped_on"},
                 function(err, docs) {
                   if(err) console.log(err);
-                  // const result = docs.map(doc => {
-                  //   console.log(doc.replies);
-                  //   let count = doc.replies.length;
-                  //   if(count > 0){
-                  //     for(let i=0;i<count;i++){
-                  //        doc.replies[i] = {_id: doc.replies[i]._id, text: doc.replies[i].text, created_on: doc.replies[i].created_on};
-                  //     }
-                  //   }
-                    // return doc;
                   console.log(docs);
                   res.json(docs)
                   });                     
