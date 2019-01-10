@@ -169,10 +169,10 @@ module.exports = function (app) {
       if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
             const collection = db.collection(board);
-              collection.find(
+              collection.findOne(
                 {_id: new ObjectId(thread_id)},
                 {reported:0, delete_password:0},
-                {replies: { reported:0, delete_password:0}},
+
                 {"sort": "bumped_on"},
                 function(err, docs) {
                   if(err) console.log(err);
@@ -185,8 +185,8 @@ module.exports = function (app) {
                   //     }
                   //   }
                     // return doc;
-                  console.log(doc);
-                  res.json(doc)
+                  console.log(docs);
+                  res.json(docs)
                   });                     
                 })
       })
