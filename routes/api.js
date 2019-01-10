@@ -83,9 +83,9 @@ module.exports = function (app) {
 
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
         const collection = db.collection(board);
-        collection.findOne(
+        collection.deleteOne(
           {_id: new ObjectId(thread_id), 
-           $elemMatch: { delete_password: delete_password }}
+            delete_password: delete_password}
           ,function(err, doc) {
             if(err) { res.send('Database error ' + err) } 
             else if(doc.lastErrorObject.updatedExisting == false) {
