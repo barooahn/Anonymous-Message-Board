@@ -169,27 +169,28 @@ module.exports = function (app) {
       if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
             const collection = db.collection(board);
-              collection.find({_id: new ObjectId(thread_id)},{reported:0, delete_password:0},
-                {
-                  "sort": "bumped_on"
-                },
+              collection.find(
+                {_id: new ObjectId(thread_id)},
+                {reported:0, delete_password:0},
+                {replies: { reported:0, delete_password:0}},
+                {"sort": "bumped_on"},
                 function(err, docs) {
                   if(err) console.log(err);
-                  const result = docs.map(doc => {
-                    console.log(doc.replies);
-                    let count = doc.replies.length;
-                    if(count > 0){
-                      for(let i=0;i<count;i++){
-                         doc.replies[i] = {_id: doc.replies[i]._id, text: doc.replies[i].text, created_on: doc.replies[i].created_on};
-                      }
-                    }
-                    return doc;
+                  // const result = docs.map(doc => {
+                  //   console.log(doc.replies);
+                  //   let count = doc.replies.length;
+                  //   if(count > 0){
+                  //     for(let i=0;i<count;i++){
+                  //        doc.replies[i] = {_id: doc.replies[i]._id, text: doc.replies[i].text, created_on: doc.replies[i].created_on};
+                  //     }
+                  //   }
+                    // return doc;
+                  console.log(doc);
+                  res.json(doc)
                   });                     
-                  console.log(result);
-                  res.json(result)
                 })
       })
-    })
+    // })
     
   .delete(function (req,res){
     //   I can delete a post(just changing the text to '[deleted]') if I send a DELETE request to /api/replies/{board} 
