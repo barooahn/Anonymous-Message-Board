@@ -186,7 +186,12 @@ module.exports = function (app) {
         { $set: { "replies.$.text": "[deleted]" } },
         function(err, doc) {
             console.log(doc);
-            (!err) ? res.send('success') : res.send('incorrect password');
+            if(err) { res.send('Database error ' + err) } 
+            else if(doc.lastErrorObject.updatedExisting == false) {
+                res.send('incorrect password')
+            } else {          
+            res.send('success');
+            }
           }  
         );
         db.close();
