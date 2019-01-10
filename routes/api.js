@@ -87,7 +87,8 @@ module.exports = function (app) {
               else if(doc.delete_password === delete_password) {
                   collection.remove();
                   res.send('success');
-              } else {
+              } 
+              else {
                 res.send('incorrect password');
               }
               
@@ -110,11 +111,15 @@ module.exports = function (app) {
             [],
             {$set: {reported : true}}, 
             function(err, doc) {
-              if(err) { res.send( 
-              doc
-          })
-      })
-    
+              if(err) { res.send('database error: ' +err)}
+              else if(doc.lastErrorObject.updatedExisting == false) {
+                res.send('incorrect id');} 
+              else {          
+                res.send('success');
+              }
+            }
+          ) 
+    })
     })
     
   app.route('/api/replies/:board')
