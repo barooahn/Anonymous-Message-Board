@@ -18,18 +18,26 @@ suite('Functional Tests', function() {
   var testText = Math.floor(Math.random()*10000000);
   var testId; //_id of thread 1 created
   var testId2; //_id of thread 2 created
-  var testId3; //_id of reply created
+  var testId3; //_id of thread 3 created
+  var testId4; //_id of reply created
 
   suite('API ROUTING FOR /api/threads/:board', function() {
     
     suite('POST', function() {
       
-      test('create 2 new threads(because we end up deleting 1 in the delete test)', function(done) {
+      test('create 3 new threads(because we end up deleting 1 in the delete test)', function(done) {
         chai.request(server)
         .post('/api/threads/fcc')
         .send({text:testText, delete_password:'pass'})
         .end(function(err, res){
           assert.equal(res.status, 200);
+        });
+        chai.request(server)
+        .post('/api/threads/fcc')
+        .send({text:testText, delete_password:'pass'})
+        .end(function(err, res){
+          assert.equal(res.status, 200);
+          done();
         });
         chai.request(server)
         .post('/api/threads/fcc')
@@ -62,6 +70,7 @@ suite('Functional Tests', function() {
           assert.isBelow(res.body[0].replies.length, 4);
           testId = res.body[0]._id;
           testId2 = res.body[1]._id;
+          testId3 = res.body[2]._id;
           done();
         });
       });
