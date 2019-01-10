@@ -96,9 +96,13 @@ module.exports = function (app) {
       });
     })
   
-    .put(fuction (req,res){
-         
-         })
+    .put(function (req,res){
+      // I can report a thread and change it's reported value to true by sending a 
+      // PUT request to /api/threads/{board} and pass along the thread_id. 
+      // (Text response will be 'success')    
+      
+    
+    })
     
   app.route('/api/replies/:board')
   
