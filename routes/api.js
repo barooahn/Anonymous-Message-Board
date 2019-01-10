@@ -185,6 +185,7 @@ module.exports = function (app) {
         [],
         { $set: { "replies.$.text": "[deleted]" } },
         function(err, doc) {
+            console.log(doc);
             (!err) ? res.send('success') : res.send('incorrect password');
           }  
         );
