@@ -169,12 +169,12 @@ module.exports = function (app) {
       if(!ObjectId.isValid(thread_id)){return res.send('invalid thread id')}
       MongoClient.connect(MONGODB_CONNECTION_STRING, function(err, db) {
             const collection = db.collection(board);
-              collection.find({thread_id: thread_id},{reported:0, delete_password:0})
+              collection.find({_id: new ObjectId(thread_id)},{reported:0, delete_password:0})
                 .sort({bumped_on: -1})
                 .toArray(function(err, docs) {
                   if(err) console.log(err);
                   const result = docs.map(doc => {
-                    //console.log(doc.replies);
+                    console.log(doc.replies);
                     let count = doc.replies.length;
                     if(count > 0){
                       for(let i=0;i<count;i++){
